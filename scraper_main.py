@@ -44,6 +44,10 @@ def scrape_case_prices(market_url, max_pages=4):
 
     return case_prices
 
+def print_case_prices(case_prices):
+    for case_name, price in case_prices.items():
+        print(f"{case_name} - {price}")
+        
 def save_prices_to_postgres(case_prices, connection_details):
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
