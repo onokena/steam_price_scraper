@@ -25,12 +25,18 @@ def scrape_case_prices(market_url, max_pages=4):
             item_containers = soup.find_all('div', {'class': 'market_listing_row'})
             for item_container in item_containers:
                 case_name_tag = item_container.find('span', {'class': 'market_listing_item_name'})
-                case_price_tag = item_container.find('span', {'class': 'normal_price'})
+                case_price_tag = item_container.find('span', {'class': 'price_value'})
 
                 if case_name_tag and case_price_tag:
-                    case_name = case_name_tag.text.strip()
-                    case_price = case_price_tag.text.strip()
-                    case_prices[case_name] = case_price
+                    if case_price_tag.text.strip() != "starting_at:":
+                        try:
+                            # Assuming price is a comma-separated value:
+                            case_price = float(case_price_tag.text.strip().replace(',', ''))
+                            case_prices[case_name] = case_price
+                        except ValueError:
+                            print(f"Invalid price format for {case_name}")
+            else:
+                print(f"Case {case_name} has no price listed.")
 
             page_number += 1
             # Introduce a delay between requests to avoid rate limiting
